@@ -1,27 +1,33 @@
 import time
-from dataclasses import dataclass
 from simple_term_menu import TerminalMenu
+import main_functions
+import logging
+from pynput import keyboard
 
 style = ("bg_red", "fg_yellow")
 cursor_style = ("fg_red", "bold")
 cursor = "> "
 cycle_cursor = True
 clear_screen = True
+is_pressed = False
 
-@dataclass
-class Menu_settings:
-    title: str
-    items: list 
+def on_press(key):
+    global is_pressed
+    is_pressed = True
+
+def on_release(key):
+    global is_pressed
+    if (key == keyboard.Key.enter and is_pressed):
+        is_pressed = False
+        return False
 
 def main():
-    main_menu = Menu_settings(
-        title=" Main Menu\n", 
-        items=["Show total investments", "Show assets", "See specific account", "Show specific asset", "Quit"]
-    ) 
+    main_menu_title = " Main Menu\n"
+    main_menu_items = ["Show total investments", "Show assets", "See specific account", "Show specific asset", "Quit"]
 
     main_menu = TerminalMenu(
-        menu_entries = main_menu.items,
-        title = main_menu.title,
+        menu_entries = main_menu_items,
+        title = main_menu_title,
         menu_cursor = cursor,
         menu_cursor_style = cursor_style,
         menu_highlight_style = style,
@@ -29,10 +35,11 @@ def main():
         clear_screen = clear_screen
     )
 
-    accounts_menu = Menu_settings(title=" Accounts\n", items=["Kraken", "Rest"])
-    edit_menu = TerminalMenu(
-        menu_entries = accounts_menu.items,
-        title = accounts_menu.title,
+    accounts_menu_title = " Accounts\n"
+    accounts_menu_items = main_functions.get_specific_accounts()
+    accounts_menu = TerminalMenu(
+        menu_entries = accounts_menu_items,
+        title = accounts_menu_title,
         menu_cursor = cursor,
         menu_cursor_style = cursor_style,
         menu_highlight_style = style,
@@ -42,6 +49,7 @@ def main():
 
     main_menu_exit = False
     edit_menu_back = False
+    accounts_menu_back = False
     while not main_menu_exit:
         main_sel = main_menu.show()
 
@@ -61,11 +69,20 @@ def main():
         elif main_sel == 1:
             print("option 2 selected")
             time.sleep(5)
+
         elif main_sel == 2:
-            print("option 3 selected")
-            time.sleep(5)
-        elif main_sel == 3:
+            logging.info("Into specific accounts")
+            
+            while True:
+                accounts_menu_selection = accounts_menu.show()
+                # Back button
+                if (len(accounts_menu_items) - 1 == accounts_menu_selection):
+                    break
+                # print(main_functions.show_account(accounts_menu_items[accounts_menu_selection]))
+                with keyboard.Listener(on_press=on_press, on_release=on_release) as listener:
+                    listener.join()
+        else: 
             main_menu_exit = True
-            print("Quit Selected")
+            logging.info("Quit Selected")
 
 main()
