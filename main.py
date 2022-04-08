@@ -78,7 +78,7 @@ def main():
                 # Back button
                 if (len(accounts_menu_items) - 1 == accounts_menu_selection):
                     break
-                # print(main_functions.show_account(accounts_menu_items[accounts_menu_selection]))
+                main_functions.show_account(accounts_menu_items[accounts_menu_selection])
                 with keyboard.Listener(on_press=on_press, on_release=on_release) as listener:
                     listener.join()
         else: 

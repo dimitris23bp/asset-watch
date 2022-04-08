@@ -1,15 +1,38 @@
-from constants import Constants
+import requests
+from constants import Exchanges, CoinGecko, MainURLs
 import logging
 import kraken
-from constants import Constants
+from crypto import Crypto
+from prettytable import PrettyTable
 
 def get_specific_accounts():
-    return [Constants.KRAKEN.value, "Other stuff", "Back"]
+    return [Exchanges.KRAKEN.value, "Other stuff", "Back"]
 
 def show_account(account_name):
     match account_name:
-        case Constants.KRAKEN.value:
+        case Exchanges.KRAKEN.value:
             logging.info("In Kraken acount")
-            return kraken.kraken_request('/0/private/Balance', {"nonce": kraken.nonce()})
-        case Constants.FTX.value:
+            return kraken.get_balance({"nonce": kraken.nonce()})
+        case Exchanges.FTX.value:
             logging.info("In FTX account")
+
+def crypto_to_fiat(crypto_name, fiat_name='eur'):
+    params = {'localization': 'false', 'tickers': 'false', 'community_data': 'false', 'developer_data': 'false'}
+    name = MainURLs.COIN_GECKO.value + CoinGecko.CRYPTO_TO_FIAT.value.format(crypto_name)
+    response = requests.get(name, params=params)
+    return float(response.json()['market_data']['current_price']['eur'])
+
+    
+def display_crypto(data: dict):
+    x = PrettyTable()
+    at_least_one = False
+    for crypto in data:
+        x.field_names = ["Crypto", "Amount", "Value"]
+        x.add_row([crypto.short_name, crypto.value, crypto.value_in_fiat])
+        at_least_one = True
+
+    if at_least_one:
+        print(x)
+    else:
+        print("Empty")
+    print()
