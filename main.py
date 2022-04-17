@@ -16,6 +16,8 @@ def on_press(key):
     is_pressed = True
 
 def on_release(key):
+    if key == keyboard.Key.backspace:
+        return False
     global is_pressed
     if (key == keyboard.Key.enter and is_pressed):
         is_pressed = False
@@ -48,24 +50,14 @@ def main():
     )
 
     main_menu_exit = False
-    edit_menu_back = False
     accounts_menu_back = False
     while not main_menu_exit:
         main_sel = main_menu.show()
 
         if main_sel == 0:
-            while not edit_menu_back:
-                edit_sel = edit_menu.show()
-                if edit_sel == 0:
-                    print("Edit Config Selected")
-                    time.sleep(5)
-                elif edit_sel == 1:
-                    print("Save Selected")
-                    time.sleep(5)
-                elif edit_sel == 2:
-                    edit_menu_back = True
-                    print("Back Selected")
-            edit_menu_back = False
+            main_functions.show_total()
+            with keyboard.Listener(on_press=on_press, on_release=on_release) as listener:
+                listener.join()
         elif main_sel == 1:
             print("option 2 selected")
             time.sleep(5)
@@ -78,7 +70,7 @@ def main():
                 # Back button
                 if (len(accounts_menu_items) - 1 == accounts_menu_selection):
                     break
-                main_functions.show_account(accounts_menu_items[accounts_menu_selection])
+                main_functions.display_all_wallets( main_functions.show_account(accounts_menu_items[accounts_menu_selection]) )
                 with keyboard.Listener(on_press=on_press, on_release=on_release) as listener:
                     listener.join()
         else: 

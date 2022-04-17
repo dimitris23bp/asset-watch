@@ -49,5 +49,3 @@ def get_balance():
         
 
         
-        
-    # TODO: Look if it works so far. If so, create a service file and a view one for displaying ftx's stuff
