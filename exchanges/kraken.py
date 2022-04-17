@@ -22,19 +22,18 @@ renaming = {
 def nonce():
     return str(int(1000*time.time())) 
 
-def get_kraken_signature(urlpath, data, secret):
+def get_signature(urlpath, data):
     postdata = urllib.parse.urlencode(data)
     encoded = (str(data['nonce']) + postdata).encode()
     message = urlpath.encode() + hashlib.sha256(encoded).digest()
 
-    mac = hmac.new(base64.b64decode(secret), message, hashlib.sha512)
+    mac = hmac.new(base64.b64decode(private_key), message, hashlib.sha512)
     sigdigest = base64.b64encode(mac.digest())
     return sigdigest.decode()
 
 def get_headers(uri_path, data):
-    return {'API-Key': api_key, 'API-Sign': get_kraken_signature(uri_path, data, private_key)}
+    return {'API-Key': api_key, 'API-Sign': get_signature(uri_path, data)}
 
-# TODO: Remove small balances, probably with a decimal instead of flaot
 def get_balance(data):
     uri_path = '/0/private/Balance'
     response = requests.post((MainURLs.KRAKEN_URL.value + uri_path), headers=get_headers(uri_path, data), data=data)
@@ -84,6 +83,7 @@ def get_balance(data):
             )
             
                 
+    # TODO: These should be in a seperated file called view_kraken or something similar
     print("Staked:")
     main_functions.display_crypto(staked_cryptos)
 
