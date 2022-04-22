@@ -2,14 +2,24 @@ import requests
 import logging
 from prettytable import PrettyTable
 
-from constants import Exchanges, CoinGecko, MainURLs
+from constants import *
 import exchanges.kraken as kraken
 import exchanges.ftx as ftx
 from crypto import * 
 
 # TODO: Add database and get the current accounts, instead of adding them manually
-def get_specific_accounts():
+def get_specific_account():
     return [Exchanges.KRAKEN.value, Exchanges.FTX.value, "Back"]
+
+def get_specific_asset():
+    return [
+        CryptoNames.BTC.value, 
+        CryptoNames.ETH.value, 
+        CryptoNames.DOT.value, 
+        CryptoNames.ADA.value, 
+        CryptoNames.GODS.value,
+        "Back"
+    ]
 
 def get_balance_from_account(account_name):
     match account_name:
@@ -117,7 +127,7 @@ def show_total():
     lended_cryptos = {}
     spot_cryptos = {}
     total_cryptos = {}
-    for exchange in get_specific_accounts()[:-1]:
+    for exchange in get_specific_account()[:-1]:
         # Get data from an exchange
         current_account_balance = get_balance_from_account(exchange)
         
