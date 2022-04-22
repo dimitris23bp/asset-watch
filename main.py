@@ -70,7 +70,8 @@ def main():
                 # Back button
                 if (len(accounts_menu_items) - 1 == accounts_menu_selection):
                     break
-                main_functions.display_all_wallets( main_functions.show_account(accounts_menu_items[accounts_menu_selection]) )
+                selected_account = accounts_menu_items[accounts_menu_selection]
+                main_functions.display_all_wallets( main_functions.get_balance_from_account(selected_account) )
                 with keyboard.Listener(on_press=on_press, on_release=on_release) as listener:
                     listener.join()
         else: 

@@ -7,10 +7,11 @@ import exchanges.kraken as kraken
 import exchanges.ftx as ftx
 from crypto import * 
 
+# TODO: Add database and get the current accounts, instead of adding them manually
 def get_specific_accounts():
     return [Exchanges.KRAKEN.value, Exchanges.FTX.value, "Back"]
 
-def show_account(account_name):
+def get_balance_from_account(account_name):
     match account_name:
         case Exchanges.KRAKEN.value:
             logging.info("In Kraken acount")
@@ -25,12 +26,33 @@ def crypto_to_fiat(crypto_name, fiat_name='eur'):
     response = requests.get(name, params=params)
     return float(response.json()['market_data']['current_price']['eur'])
 
-    
 def display_all_wallets(cryptos: list[Crypto]):
-    staked_cryptos = {} 
+    staked_cryptos = {}
     lended_cryptos = {}
     spot_cryptos = {}
     total_cryptos = {}
+    get_all_wallets(staked_cryptos, lended_cryptos, spot_cryptos, total_cryptos, cryptos)
+    
+    if len(staked_cryptos) > 0:
+        print("Staked:")
+        display_crypto(seperate_from_dict(staked_cryptos))
+
+    if len(lended_cryptos) > 0:
+        print("Lended:")
+        display_crypto(seperate_from_dict(lended_cryptos))
+
+    if len(spot_cryptos) > 0:
+        print("Spot:")
+        display_crypto(seperate_from_dict(spot_cryptos))
+
+    if len(total_cryptos) > 0:
+        print("Total:")
+        display_crypto(seperate_from_dict(total_cryptos))
+    
+# Αυτή η συναρτηση θα παρει ως παραμετρους ολα τα dicts ωστε να τα γεμιζει με το total. Ετσι, θα μπορει να χρησιμοποιηθει 
+# και εδω, αλλα και στο να παρει τα totals in general. Οποτε θα γινει μια συναρτηση display_all_wallets, η οποια θα παιρνει αυτην εδω
+# και απλως θα την εμφανιζει.
+def get_all_wallets(staked_cryptos: dict, lended_cryptos: dict, spot_cryptos: dict, total_cryptos: dict, cryptos: list[Crypto]):
     for crypto in cryptos:
         if crypto.wallet == Wallet.STAKING:
             if crypto.short_name in staked_cryptos:
@@ -79,8 +101,29 @@ def display_all_wallets(cryptos: list[Crypto]):
             )
         else:
             total_cryptos[crypto.short_name] = crypto
+            
     
-       
+def display_crypto(data: list):
+    x = PrettyTable()
+    for crypto in data:
+        x.field_names = ["Crypto", "Amount", "Value"]
+        x.add_row([crypto.short_name, round(crypto.value, 8), round(crypto.value_in_fiat, 2)])
+
+    print(x)
+    print()
+
+def show_total():
+    staked_cryptos = {}
+    lended_cryptos = {}
+    spot_cryptos = {}
+    total_cryptos = {}
+    for exchange in get_specific_accounts()[:-1]:
+        # Get data from an exchange
+        current_account_balance = get_balance_from_account(exchange)
+        
+        # Get data to the total amount
+        get_all_wallets(staked_cryptos, lended_cryptos, spot_cryptos, total_cryptos, current_account_balance)
+
     if len(staked_cryptos) > 0:
         print("Staked:")
         display_crypto(seperate_from_dict(staked_cryptos))
@@ -96,26 +139,6 @@ def display_all_wallets(cryptos: list[Crypto]):
     if len(total_cryptos) > 0:
         print("Total:")
         display_crypto(seperate_from_dict(total_cryptos))
-            
-            
-            
-    
-def display_crypto(data: list):
-    x = PrettyTable()
-    for crypto in data:
-        x.field_names = ["Crypto", "Amount", "Value"]
-        x.add_row([crypto.short_name, round(crypto.value, 8), round(crypto.value_in_fiat, 2)])
-
-    print(x)
-    print()
-
-def show_total():
-    for exchange in get_specific_accounts()[:-1]:
-        show_account(exchange)
-        # Get data from an exchange
-        
-        
-        # Get data to the total amount
 
 def seperate_from_dict(dictionary: dict):
     list = []

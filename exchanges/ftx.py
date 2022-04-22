@@ -1,10 +1,11 @@
+from crypt import crypt
 from urllib.parse import urlparse
 import hmac
 import requests
 import os
 import time
 from constants import MainURLs
-from crypto import Crypto
+from crypto import Crypto, Wallet
 import main_functions
 
 api_key = os.environ['FTX_API_KEY']
@@ -41,11 +42,10 @@ def get_balance():
             name=renaming[crypto['coin']],
             short_name=crypto['coin'],
             value=float(crypto['total']),
-            value_in_fiat=main_functions.crypto_to_fiat(renaming[crypto['coin']]) * float(crypto['total'])
+            value_in_fiat=main_functions.crypto_to_fiat(renaming[crypto['coin']]) * float(crypto['total']),
+            wallet=Wallet.SPOT
         ))
         
-        print("Spot:")
-        main_functions.display_crypto(cryptos)
-        
+    return cryptos
 
         
