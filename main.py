@@ -1,5 +1,6 @@
 from simple_term_menu import TerminalMenu
 import main_functions
+import view_functions
 import logging
 from pynput import keyboard
 
@@ -40,7 +41,7 @@ def main():
     )
 
     accounts_menu_title = " Accounts\n"
-    accounts_menu_items = main_functions.get_specific_account()
+    accounts_menu_items = main_functions.get_specific_exchange()
     accounts_menu = TerminalMenu(
         menu_entries = accounts_menu_items,
         title = accounts_menu_title,
@@ -57,7 +58,7 @@ def main():
 
         if main_sel == 0:
             logging.info("Into total, investment")
-            main_functions.show_total()
+            view_functions.display_all()
             with keyboard.Listener(on_release=on_release) as listener:
                 listener.join()
         elif main_sel == 1:
@@ -68,13 +69,13 @@ def main():
                 if (len(assets_menu_items) - 1 == assets_menu_selection):
                     break
                 selected_asset = assets_menu_items[assets_menu_selection]
-                # main_functions.display_asset(selected_asset)
+                view_functions.display_asset(selected_asset)
                 with keyboard.Listener(on_release=on_release) as listener:
                     listener.join()
                 
 
         elif main_sel == 2:
-            logging.info("Into specific account")
+            logging.info("Into specific exchange")
             
             while True:
                 accounts_menu_selection = accounts_menu.show()
@@ -82,7 +83,7 @@ def main():
                 if (len(accounts_menu_items) - 1 == accounts_menu_selection):
                     break
                 selected_account = accounts_menu_items[accounts_menu_selection]
-                main_functions.display_all_wallets( main_functions.get_balance_from_account(selected_account) )
+                view_functions.display_exchange( main_functions.get_balance_from_exchange(selected_account) )
                 with keyboard.Listener(on_release=on_release) as listener:
                     listener.join()
         else: 

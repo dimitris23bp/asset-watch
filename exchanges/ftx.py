@@ -1,5 +1,3 @@
-from crypt import crypt
-from urllib.parse import urlparse
 import hmac
 import requests
 import os
