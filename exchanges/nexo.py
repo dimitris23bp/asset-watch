@@ -8,6 +8,7 @@ def get_balance():
     with open('nexo_transactions.csv') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         renaming = get_renaming()
+        # Go through the CSV in reversed order to be chronologically correct and skip the title
         for row in reversed(list(csv_reader)[1:]):
             transaction_type = row[1]
             short_name = row[4]
@@ -42,7 +43,10 @@ def get_balance():
                 )
                 
     cryptos = main_functions.seperate_from_dict(cryptos)    
+
+    # Add value in fiat
     for crypto in reversed(cryptos):
         crypto.value_in_fiat = main_functions.crypto_to_fiat(renaming[crypto.short_name]) * crypto.value
+        # Remove small balances
         if crypto.value_in_fiat < 0.01: cryptos.remove(crypto)
     return cryptos

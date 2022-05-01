@@ -35,14 +35,13 @@ def get_balance(data):
 
     cryptos = []
     for key, value in response.json()['result'].items():
-        final_key = key
-
-        if (key not in renaming and key[:-2] not in renaming) or float(value) < 0.01:
+        final_key = key[:-1] if key == 'ETH2' else key
+        if (key not in renaming and key[:-2] not in renaming):
             continue
             
         # Add in seperated lists with staked and non-staked
         if key[-2:] == '.S':
-            final_key = key[:-2]
+            final_key = key[:-3] if key[:-2] == 'ETH2' else key[:-2]
             cryptos.append( Crypto(
                 name=renaming[final_key], 
                 short_name=final_key, 
@@ -58,4 +57,8 @@ def get_balance(data):
                 value_in_fiat=main_functions.crypto_to_fiat(renaming[final_key]) * float(value),
                 wallet=Wallet.SPOT
             ))
+    # Remove small balances
+    for crypto in reversed(cryptos):
+        if crypto.value_in_fiat < 0.01: cryptos.remove(crypto)
+ 
     return cryptos

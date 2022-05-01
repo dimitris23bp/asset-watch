@@ -11,19 +11,31 @@ def display_all():
 
     if len(staked_cryptos) > 0:
         print("Staked:")
-        display_wallet(seperate_from_dict(staked_cryptos))
+        staked_cryptos_list = seperate_from_dict(staked_cryptos)
+        display_wallet(staked_cryptos_list)
+        print(f'Value in fiat: {round(sum(crypto.value_in_fiat for crypto in staked_cryptos_list), 2)}')
+        print()
 
     if len(lended_cryptos) > 0:
         print("Lended:")
-        display_wallet(seperate_from_dict(lended_cryptos))
+        lended_cryptos_list = seperate_from_dict(lended_cryptos)
+        display_wallet(lended_cryptos_list)
+        print(f'Value in fiat: {round(sum(crypto.value_in_fiat for crypto in lended_cryptos_list), 2)}')
+        print()
 
     if len(spot_cryptos) > 0:
         print("Spot:")
-        display_wallet(seperate_from_dict(spot_cryptos))
+        spot_cryptos_list = seperate_from_dict(spot_cryptos)
+        display_wallet(spot_cryptos_list)
+        print(f'Value in fiat: {round(sum(crypto.value_in_fiat for crypto in spot_cryptos_list), 2)}')
+        print()
 
     if len(total_cryptos) > 0:
         print("Total:")
-        display_wallet(seperate_from_dict(total_cryptos))
+        total_cryptos_list = seperate_from_dict(total_cryptos)
+        display_wallet(total_cryptos_list)
+        print(f'Value in fiat: {round(sum(crypto.value_in_fiat for crypto in total_cryptos_list), 2)}')
+        print()
 
 def display_wallet(data: list):
     x = PrettyTable()
@@ -31,7 +43,6 @@ def display_wallet(data: list):
         x.field_names = ["Crypto", "Amount", "Value"]
         x.add_row([crypto.short_name, round(crypto.value, 8), round(crypto.value_in_fiat, 2)])
     print(x)
-    print()
 
 def display_exchange(cryptos: list[Crypto]):
     staked_cryptos = {}
