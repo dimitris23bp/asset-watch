@@ -12,14 +12,6 @@ from crypto import *
 
 api_key = os.environ['KRAKEN_API_KEY']
 private_key = os.environ['KRAKEN_PRIVATE_KEY']
-renaming = {
-    'ETH': 'ethereum',
-    'ETH2': 'ethereum',
-    'DOT': 'polkadot',
-    'BTC': 'bitcoin',
-    'ADA': 'cardano',
-    'SCRT': 'secret',
-}
 
 def nonce():
     return str(int(1000*time.time())) 
@@ -39,6 +31,7 @@ def get_headers(uri_path, data):
 def get_balance(data):
     uri_path = '/0/private/Balance'
     response = requests.post((MainURLs.KRAKEN_URL.value + uri_path), headers=get_headers(uri_path, data), data=data)
+    renaming = get_renaming()
 
     cryptos = []
     for key, value in response.json()['result'].items():

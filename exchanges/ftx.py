@@ -3,14 +3,12 @@ import requests
 import os
 import time
 from constants import MainURLs
-from crypto import Crypto, Wallet
+from crypto import *
 import main_functions
 
 api_key = os.environ['FTX_API_KEY']
 private_key = os.environ['FTX_PRIVATE_KEY']
-renaming = {
-    'GODS': 'gods-unchained'
-}
+
 def get_nonce():
     return str(int(1000*time.time())) 
 
@@ -30,7 +28,7 @@ def get_headers(method, url_path):
 def get_balance():
     path_url = '/api/wallet/balances'
     response = requests.get(MainURLs.FTX_URL.value + path_url, headers=get_headers('GET', path_url))
-
+    renaming = get_renaming()
     cryptos = []
     for crypto in response.json()['result']:
         if crypto['total'] == 0.0 or crypto['coin'] not in renaming:

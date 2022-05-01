@@ -3,6 +3,7 @@ from enum import Enum
 class Exchanges(Enum):
     KRAKEN = "Kraken"
     FTX = "FTX"
+    NEXO = "Nexo"
 
 class CryptoNames(Enum):
     BTC = "BTC:  Bitcoin"
