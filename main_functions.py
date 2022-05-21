@@ -5,11 +5,12 @@ from constants import *
 import exchanges.kraken as kraken
 import exchanges.ftx as ftx
 import exchanges.nexo as nexo
+import exchanges.crypto_com as crypto_com
 from crypto import * 
 
 # TODO: Add database and get the current accounts, instead of adding them manually
 def get_specific_exchange():
-    return [Exchanges.KRAKEN.value, Exchanges.FTX.value, Exchanges.NEXO.value, "Back"]
+    return [Exchanges.KRAKEN.value, Exchanges.FTX.value, Exchanges.NEXO.value, Exchanges.CRYPTO_COM.value, "Back"]
 
 def get_specific_asset():
     crypto_names = []
@@ -29,6 +30,9 @@ def get_balance_from_exchange(account_name):
         case Exchanges.NEXO.value:
             logging.info("In Nexo account")
             return nexo.get_balance()
+        case Exchanges.CRYPTO_COM.value:
+            logging.info("In Crypto.com account")
+            return crypto_com.get_balance()
             
 
 def crypto_to_fiat(crypto_name, fiat_name='eur'):

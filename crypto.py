@@ -15,7 +15,9 @@ def get_renaming():
         'PAXG': 'pax-gold',
         'EURX': 'tether-eurt', # CoinGecko doesn't have EURX, so I replace it with another stablecoin
         'DAI': 'dai',
-        'USDT': 'tether'
+        'USDT': 'tether',
+        'CRO': 'crypto-com-chain',
+        'USDC': 'usd-coin'
     }
 
 class Wallet(Enum):
